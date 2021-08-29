@@ -6,7 +6,7 @@ import seaborn as sns
 #Importing data
 
 #dataset
-raw16 = pd.read_csv('pass-2016.csv')
+raw16 = pd.read_csv('pass-2016.csv', converters = {'Pos': str})
 wins = pd.read_csv('NFL -  Wins.csv')
 
 #3) Analyzing data
@@ -24,7 +24,7 @@ print(raw16.columns)
 print(wins.columns)
 
 ##To check the type of data in each column
-print(raw.dtypes)
+print(raw16.dtypes)
 print(wins.dtypes)
 
 ##Missing values count, column drop, recount
@@ -38,10 +38,11 @@ raw16_1 = raw16.dropna(axis = 1)
 print(raw16_1.isnull().sum())
 
 #Select target rows and columns
-raw16_2 = [raw16_1.Pos == 'QB']
+raw16_2 = raw16_1[raw16_1.Pos == 'QB']
 print(raw16_2)
 
 stat16 = raw16_2[['Player', 'Tm', 'Age', 'Yds', 'TD', 'Y/G', 'Cmp', 'Lng', "Int"]]
+
 print(stat16.shape)
 
 #COLOR is selected as it contains the same unique team identifier present in pass-2016.csv
@@ -70,10 +71,18 @@ TDs = stat16.sort_values(by='TD', ascending=False)
 
 #grouping by age (<30 and >30) TBD
 
-youngQB = stat16.groupby('Age'==30)
-
+youngQB = stat16[stat16['Age'] < 30]
 print(youngQB)
 
 #chart QB performance in Yds by age
+sns.relplot(x="Age", y="Yds", data=stat16);
+sns.relplot(x="Age", y="Yds", hue="TD", data=stat16);
+
+# show the plot
+plt.show()
+
+sns.relplot(x="Age", y="Yds", data=youngQB);
+sns.relplot(x="Age", y="Yds", hue="TD", data=youngQB);
+
 
 #completions and completion percentage vs wins

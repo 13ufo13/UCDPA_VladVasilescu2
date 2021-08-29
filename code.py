@@ -47,42 +47,65 @@ print(stat16.shape)
 
 #COLOR is selected as it contains the same unique team identifier present in pass-2016.csv
 wins_1 = wins[['COLOR', '2016', '2015']]
-print(wins_1.shape)
+
+#rename COLOR to Tm in wins to correspond to column of unique identifier in stat16
+wins_2 = wins_1.rename(columns={'COLOR':'Tm'})
+
+#check result of rename
+print(wins_2)
 
 #Determine wins for 2016 season (difference between absolute wins in 2016 and absolute wins in 2015)
-wins16 = wins_1["2016"] = abs(wins_1['2016'] - wins_1['2015'])
+wins_abs = wins_2["2016"] = abs(wins_2['2016'] - wins_2['2015'])
 
-#print(wins16)
-print(wins16.shape)
+# wins_abs2 = wins_abs.rename(columns={'0':'Win'})
+#
+wins_teams = wins_2 ['Tm']
 
-#print(stat16)
 
+print(wins_abs)
+#Form absolute wins db with unique identifier and check
+
+wins_3 = pd.concat([wins_teams, wins_abs], axis=1)
+
+print(wins_3.columns)
+
+wins16 = wins_3.rename(columns={wins_3.columns[1]:'Wins'})
+
+print(wins16)
+
+#Merge the 2 data sets with Tm as common identifier
+
+qb16 = pd.merge(stat16, wins16, on='Tm')
+
+print(qb16)
 
 #Sort data in descending order of player age, Total Yards, TDs
 
-oldest = stat16.sort_values(by='Age', ascending=False)
+oldest = qb16.sort_values(by='Age', ascending=False)
 #print(oldest)
 
-Yds = stat16.sort_values(by='Yds', ascending=False)
+Yds = qb16.sort_values(by='Yds', ascending=False)
 #print(Yds)
 
-TDs = stat16.sort_values(by='TD', ascending=False)
+TDs = qb16.sort_values(by='TD', ascending=False)
 #print(TDs)
 
+qbwins = qb16.sort_values(by='Wins', ascending=False)
 #grouping by age (<30 and >30) TBD
 
-youngQB = stat16[stat16['Age'] < 30]
+youngQB = qb16[qb16['Age'] < 30]
 print(youngQB)
 
 #chart QB performance in Yds by age
-sns.relplot(x="Age", y="Yds", data=stat16);
-sns.relplot(x="Age", y="Yds", hue="TD", data=stat16);
+# sns.relplot(x="Age", y="Yds", data=qb16);
+# sns.relplot(x="Age", y="Yds", hue="TD", data=qb16);
+sns.relplot(x="Age", y="Wins", hue="TD", data=qb16);
+# sns.relplot(x="Age", y="Yds", data=youngQB);
+# sns.relplot(x="Age", y="Cmp", hue="Int", data=youngQB);
+
+
 
 # show the plot
 plt.show()
 
-sns.relplot(x="Age", y="Yds", data=youngQB);
-sns.relplot(x="Age", y="CMP", hue="Int", data=youngQB);
-
-plt.show()
 #completions and completion percentage vs wins

@@ -82,7 +82,7 @@ sns.relplot(x="Age", y="Yds", hue="TD", data=stat16);
 plt.show()
 
 sns.relplot(x="Age", y="Yds", data=youngQB);
-sns.relplot(x="Age", y="Yds", hue="TD", data=youngQB);
+sns.relplot(x="Age", y="CMP", hue="Int", data=youngQB);
 
-
+plt.show()
 #completions and completion percentage vs wins
